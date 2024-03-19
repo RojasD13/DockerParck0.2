@@ -1,0 +1,61 @@
+version: "3"
+services:
+  nginx:
+    build: /nginx
+    container_name: nginx_park
+    ports:
+      - "80:80"
+    networks:
+      - my-network
+    depends_on:
+      - api_1
+      - api_2
+      - api_3
+  api_1:
+    build: /api
+    container_name: container_apiPark_1
+    ports:
+      - "8080:8000"
+    networks:
+      - my-network
+    environment:
+      - CDN_URL=http://cdn:3000/upload
+      - DB_URL=http://db:3600
+  api_2:
+    build: /api
+    container_name: container_apiPark_2
+    ports:
+      - "8081:8000"
+    networks:
+      - my-network
+    environment:
+      - CDN_URL=http://cdn:3000/upload
+      - DB_URL=http://db:3600
+  api_3:
+    build: /api
+    container_name: container_apiPark_3
+    ports:
+      - "8082:8000"
+    networks:
+      - my-network
+    environment:
+      - CDN_URL=http://cdn:3000/upload
+      - DB_URL=http://db:3600
+  cdn:
+    build: /CDNserver
+    container_name: container_CDN
+    ports:
+      - "3000:3000"
+    networks:
+      - my-network
+  db:
+    build: /serverDataBase
+    container_name: dataBase
+    ports:
+      - "3600:3600"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
