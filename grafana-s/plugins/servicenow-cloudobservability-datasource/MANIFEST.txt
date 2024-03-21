@@ -1,0 +1,36 @@
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "commercial",
+  "signedByOrg": "servicenow",
+  "signedByOrgName": "servicenow",
+  "plugin": "servicenow-cloudobservability-datasource",
+  "version": "4.0.0",
+  "time": 1702666678168,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "LICENSE": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "CHANGELOG.md": "b9f1fb71099b47020cc4b31640e3a75e1d9bd06abbb4d05d5d2f8c4fd5758807",
+    "module.js.map": "25c758daa8a89fe4d21dd1c82c0da6112ded80cc8a7ead4ec888037befe4e903",
+    "plugin.json": "4b9564f70c2efab859e995aa14c0e6967724be9f45de8baed1f2f4dd47af65b0",
+    "README.md": "74271a8e25d82a742e37b66b400d82dd35e1035debf08bacefc0d1bb4a0a2f72",
+    "img/grafana_dashboard_overview.png": "3ad47bf58831cd59e20acfb6cab24d42195474e63d6536dac6430ef51dda133f",
+    "img/logo_small.svg": "725952d849df4abe128bc4cec20b888ae825afcf86169ab40a79123168a5b373",
+    "img/logo_large.svg": "073fcbef28fe5dd96df357ade8894d860fe4e9c3cb87d581d89a054bbf2433cc",
+    "module.js": "7d45f861df484b94021cb0807fd80f39619c1275dc4d5605ce51dba6858a9e8a"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+Version: OpenPGP.js v4.10.10
+Comment: https://openpgpjs.org
+
+wrgEARMKAAYFAmV8obYAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm5y8yAgkBdKOn/qeHsgTvai48LjaHgcKlzOTHIq47wOZG/SoKvUgN9Zoe
+PTPswHQkvBSiWuGUa6rEjN41dle0Eo3cC36qaJMCB21G4rpSs2O9cLCZeuSM
+jgoXHqSrMrE122gn4SmZmJnHEktxAyKnnOwSMT36tJV6/wu7q9hKRY3F83lY
+JTblM1Nt
+=U+ea
+-----END PGP SIGNATURE-----

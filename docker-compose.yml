@@ -1,12 +1,15 @@
-version: "3"
+version: '3.8'
+
+volumes:
+  grafana-data:
+  prometheus-data: 
+
 services:
   nginx:
     build: /nginx
     container_name: nginx_park
     ports:
       - "80:80"
-    networks:
-      - my-network
     depends_on:
       - api_1
       - api_2
@@ -16,46 +19,47 @@ services:
     container_name: container_apiPark_1
     ports:
       - "8080:8000"
-    networks:
-      - my-network
-    environment:
-      - CDN_URL=http://cdn:3000/upload
-      - DB_URL=http://db:3600
+      - "9104:9100"
   api_2:
     build: /api
     container_name: container_apiPark_2
     ports:
       - "8081:8000"
-    networks:
-      - my-network
-    environment:
-      - CDN_URL=http://cdn:3000/upload
-      - DB_URL=http://db:3600
+      - "9101:9100"
+      # - "9091:9090"
   api_3:
     build: /api
     container_name: container_apiPark_3
     ports:
       - "8082:8000"
-    networks:
-      - my-network
-    environment:
-      - CDN_URL=http://cdn:3000/upload
-      - DB_URL=http://db:3600
-  cdn:
-    build: /CDNserver
-    container_name: container_CDN
+      - "9103:9100"
+      # - "9092:9090"
+  grafana:
+    image: grafana/grafana:latest
+    container_name: container_grafana
+    restart: unless-stopped
     ports:
-      - "3000:3000"
-    networks:
-      - my-network
-  db:
-    build: /serverDataBase
-    container_name: dataBase
+      - "8083:3000"
+    # environment:
+      # - GF_INSTALL_PLUGINS=grafana-clock-panel, grafana-simple-json-datasource
+    volumes: 
+      - ./grafana-s:/var/lib/grafana
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: container_prometheus
+    restart: unless-stopped
+    volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    - prometheus-data:/prometheus
     ports:
-      - "3600:3600"
-    networks:
-      - my-network
-
-networks:
-  my-network:
-    driver: bridge
+    - 8084:9090
+    command:
+    - '--config.file=/etc/prometheus/prometheus.yml'
+    - '--storage.tsdb.path=/prometheus'
+    - '--storage.tsdb.retention.time=2d'
+    - '--web.enable-lifecycle'
+  node-exporter:
+    image: prom/node-exporter
+    ports:
+      - 9100:9100
+    

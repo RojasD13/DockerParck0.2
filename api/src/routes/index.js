@@ -1,17 +1,30 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
-const CDN_URL = process.env.CDN_URL || "http://localhost:3000/upload";
-const DB_URL = process.env.DB_URL || "http://localhost:3600";
-
+const FormData = require('form-data');
 const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+const Vehiculo = require('../schemas/VehiculoSchema')
+const client = require('prom-client');
+const collectDefaultMetrics = client.collectDefaultMetrics;
+const Registry = client.Registry;
+const register = new Registry();
+
+collectDefaultMetrics();
+
+router.get('/metrics', async (_req, res) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+  } catch (err) {
+    res.status(500).end(err);
+  }
+});
 
 router.get("/", async (req, res) => {
   try {
-    const cars = (await axios.get(DB_URL)).data;
-    res.json(cars);
+    Vehiculo.find().then(vehiculos => { res.status(200).json(vehiculos) })
   } catch (error) {
     console.log(error.message);
     res.sendStatus(500);
@@ -20,31 +33,43 @@ router.get("/", async (req, res) => {
 
 router.post("/add", upload.single("imagen"), async (req, res) => {
   try {
+    const { file } = req;
     const { placa, color, hora } = req.body;
-    const formData = new FormData();
-    formData.append(
-      "imagen",
-      new File([req.file.buffer], req.file.originalname)
-    );
-    const pathImage = (
-      await axios.post(CDN_URL, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-    ).data.fileUrl;
-    const body = { placa, color, hora, pathImage };
-    await axios.post(DB_URL + "/add", body);
-    res.sendStatus(200);
+    var form = new FormData();
+    form.append('image', file.buffer, { filename: file.originalname });
+
+    const options = {
+      method: 'POST',
+      url: 'https://api.imgbb.com/1/upload',
+      params: { key: 'f910c979d4694de054e4f35ac1b5d27f' },
+      headers: { 'content-type': 'multipart/form-data' },
+      data: form
+    };
+
+    axios.request(options).then((response) => {
+      const { data: result } = response;
+      const fileUrl = result.data.image.url;
+      const v1 = new Vehiculo({ placa, color, hora, pathImage: fileUrl });
+      v1.save().then(v => {
+        res.status(200).json(v);
+      });
+    }).catch((error) => {
+      console.log(error)
+      res.status(500).send(error);
+    });
+
   } catch (error) {
     console.log(error.message);
-    res.sendStatus(500);
+    res.status(500).send(error);
   }
 });
 
 router.delete("/:placa", async (req, res) => {
   try {
     const { placa } = req.params;
-    await axios.delete(DB_URL + "/" + placa);
+    Vehiculo.findOneAndDelete({ placa }).then(() => {
     res.sendStatus(200);
+    });
   } catch (error) {
     console.log(error.message);
     res.sendStatus(500);

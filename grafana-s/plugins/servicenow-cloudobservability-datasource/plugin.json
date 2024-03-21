@@ -1,0 +1,86 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "datasource",
+  "name": "ServiceNow Cloud Observability",
+  "id": "servicenow-cloudobservability-datasource",
+  "logs": true,
+  "metrics": true,
+  "info": {
+    "description": "Instantly visualize ServiceNow Cloud Observability (formerly known as Lightstep) data in Grafana",
+    "author": {
+      "name": "ServiceNow Cloud Observability",
+      "url": "https://www.servicenow.com/products/observability.html"
+    },
+    "keywords": ["ServiceNow", "cloud", "observability", "OpenTelemetry", "OTel", "metrics", "spans", "traces"],
+    "logos": {
+      "small": "img/logo_small.svg",
+      "large": "img/logo_large.svg"
+    },
+    "links": [
+      {
+        "name": "ServiceNow Cloud Observability",
+        "url": "https://www.servicenow.com/products/observability.html"
+      },
+      {
+        "name": "Github",
+        "url": "https://github.com/lightstep/servicenow-cloud-observability-datasource"
+      }
+    ],
+    "screenshots": [
+      {
+        "name": "overview",
+        "path": "img/grafana_dashboard_overview.png"
+      }
+    ],
+    "version": "4.0.0",
+    "updated": "2023-12-15"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=8.4.7",
+    "plugins": []
+  },
+  "routes": [
+    {
+      "path": "test",
+      "url": "https://{{ or .JsonData.apiHost \"api.lightstep.com\"}}/public/v0.2/{{ .JsonData.orgName}}/test",
+      "headers": [
+        {
+          "name": "Authorization",
+          "content": "Bearer {{ .SecureJsonData.apiKey }}"
+        },
+        {
+          "name": "Content-Type",
+          "content": "application/json"
+        }
+      ]
+    },
+    {
+      "path": "query",
+      "url": "https://{{ or .JsonData.apiHost \"api.lightstep.com\"}}/public/v0.2/{{ .JsonData.orgName}}/projects/{{ .JsonData.projectName}}/telemetry/query_timeseries",
+      "headers": [
+        {
+          "name": "Authorization",
+          "content": "Bearer {{ .SecureJsonData.apiKey }}"
+        },
+        {
+          "name": "Content-Type",
+          "content": "application/json"
+        }
+      ]
+    },
+    {
+      "path": "projects",
+      "url": "https://{{ or .JsonData.apiHost \"api.lightstep.com\"}}/public/v0.2/{{ .JsonData.orgName}}/projects",
+      "headers": [
+        {
+          "name": "Authorization",
+          "content": "Bearer {{ .SecureJsonData.apiKey }}"
+        },
+        {
+          "name": "Content-Type",
+          "content": "application/json"
+        }
+      ]
+    }
+  ]
+}
